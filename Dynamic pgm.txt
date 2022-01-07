@@ -1,0 +1,118 @@
+Maximum Product Subarray
+
+class Solution {
+public:
+    void solve(vector<int>&nums,int &ans,int ind,int sum){
+        if(sum>ans)ans=sum;
+        if (ind==nums.size()) return;
+     
+        cout<<ind<<" "<<sum<<endl;
+        for (int i=ind;i<nums.size();i++){
+            solve(nums,ans,ind+1,sum*nums[ind]);
+            solve(nums,ans,ind+1,nums[ind]);
+        }
+        
+    }
+    int maxProduct(vector<int>& nums) {
+        int ans=INT_MIN;
+        solve(nums,ans,1,nums[0]);
+        return ans;
+    }
+};
+
+
+#include<bits/stdc++.h>
+using namespace std;
+vector<vector<int>>dp(4,vector<int>(4,INT_MIN));
+int maxv=INT_MIN;
+void solve(vector<int>&nums,int ind,vector<int>temp,int i,int j,int sum){
+
+        if(dp[i][j]!=INT_MIN) return;
+        for (auto x:temp) cout<<x<<" ";
+        cout<<" "<<sum<<endl;
+        if (maxv<sum) maxv=sum;
+        dp[i][j]=sum;
+        if (ind==nums.size()) return;
+     
+        temp.push_back(nums[ind]);
+        solve(nums,ind+1,temp,i,j+1,sum*nums[ind]);
+    	temp.pop_back();
+    	solve(nums,ind+1,vector<int>{nums[ind]},ind,ind,nums[ind]);
+        
+        
+    }
+int main(){
+vector<int>nums{2,3,-2,4};
+solve(nums,1,vector<int>{nums[0]},0,0,nums[0]);
+for (auto x:dp){
+	for(auto y:x){
+		cout<<y<<" ";
+	}
+	cout<<endl;
+}
+cout<<maxv;
+}
+
+
+class Solution {
+public:
+
+    int maxProduct(vector<int>& nums) {
+        vector<vector<int>>dp(nums.size(),vector<int>(nums.size(),0));
+        int maxv=INT_MIN;
+        for (int i=0;i<nums.size();i++){
+            dp[0][i]=nums[i];
+            if(nums[i]>maxv) maxv=nums[i];
+            
+        }
+        int i=1,j=1;
+   
+        while(i!=nums.size()){
+            while(j!=nums.size()){
+                if(j==i)
+                    dp[i][j]=dp[0][j-1]*dp[0][j];
+                else
+                    dp[i][j]=dp[i][j-1]*dp[0][j];
+                if (dp[i][j]>maxv) maxv=dp[i][j];
+                j++;
+            }
+            j=i;
+            i++;
+        }
+        
+        return maxv;
+    }
+};
+
+
+class Solution {
+public:
+    int min(int a,int b){
+        if(a<b) return a;
+        return b;
+    }
+    int max(int a,int b){
+        if(a>b) return a;
+        return b;
+    }
+    int maxProduct(vector<int>& nums) {
+        int minval=nums[0];
+        int maxval=nums[0];
+        int gres=nums[0];
+        int a,b;
+        for(int i=1;i<nums.size();i++){
+            if(nums[i]<0){
+                a=max(nums[i],nums[i]*minval);
+                b=min(nums[i],nums[i]*maxval);
+                maxval=a;
+                minval=b;
+            }
+            else{
+                maxval=max(nums[i],nums[i]*maxval);
+                minval=min(nums[i],nums[i]*minval);
+            }
+            gres=max(gres,maxval);
+        }
+        return gres;
+    }
+};
